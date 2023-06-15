@@ -24,7 +24,7 @@ def generate_html(json_data, soup):
         formats.append(format_h3)
         format_ul = soup.new_tag('ul')
         
-        for formdict in attributes['formats']:
+        for formdict in attributes['fits-formats']:
             li = soup.new_tag('li')
             if formdict['format'] == '':
                 li.string = f"Unidentified: {formdict['count']}"

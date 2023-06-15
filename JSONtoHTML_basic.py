@@ -14,7 +14,7 @@ def generate_html(json_data, soup):
         body.append(newH2)
         # html_content += f"<h2>{AIPdir}</h2>"
         note = soup.new_tag('h3', class_='note')
-        note.string = f"Content note: {attributes['note']}"
+        note.string = f"Content note: {attributes['note']} [{attributes['years']}]"
         body.append(note)
         # html_content += f"<h3>Content note: {attributes['note']}</h3>"
         rankings = soup.new_tag('div', attrs={'class': 'rankings'})
@@ -25,7 +25,7 @@ def generate_html(json_data, soup):
         rankings.append(content_ranking)
         access_ranking.string = f"Access ranking: {attributes['rankings']['access_ranking']} ({attributes['rankings']['access_note']})"
         rankings.append(access_ranking)
-        preservation_ranking.string = f"Access ranking: {attributes['rankings']['preservation_ranking']} ({attributes['rankings']['preservation_note']})"
+        preservation_ranking.string = f"Preservation ranking: {attributes['rankings']['preservation_ranking']} ({attributes['rankings']['preservation_note']})"
         rankings.append(preservation_ranking)
         if attributes['rankings']['other_note'] != '':
             other_note = soup.new_tag('p')
@@ -37,7 +37,7 @@ def generate_html(json_data, soup):
         formats.append(format_h3)
         format_ul = soup.new_tag('ul')
         # html_content += f"<h3>Formats:</h3><ul>"
-        for formdict in attributes['formats']:
+        for formdict in attributes['sf-formats']:
             li = soup.new_tag('li')
             if formdict['format'] == '':
                 li.string = f"Unidentified: {formdict['count']}"
