@@ -9,13 +9,13 @@ sudo fmount -t "$IMAGE" 2>&1 | tee ${IMAGE}_tmp
 
 MOUNTED_IMAGE=$(grep -E -o '\/.+\/' ${IMAGE}_tmp)
 
-touch "$1"/data/reports/"$1"_virus_check.txt
+touch "$1"/reports/"$1"_virus_check.txt
 
-clamscan -r $MOUNTED_IMAGE | tee "$1"/data/reports/"$1"_virus_check.txt
+clamscan -r $MOUNTED_IMAGE | tee "$1"/reports/"$1"_virus_check.txt
 
-fiwalk -X"$1"/data/reports/"$1"_dfxml.xml "$IMAGE"
+fiwalk -X"$1"/reports/"$1"_dfxml.xml "$IMAGE"
 
-mv "$1"/data/disk_image/"$1".info "$1"/data/reports/"$1".info
+mv "$1"/disk_image/"$1".info "$1"/reports/"$1".info
 
 sudo umount $MOUNTED_IMAGE
 
