@@ -7,10 +7,11 @@ find "$directory" -type f -printf "%T@\n" > dates.txt
 
 # Sort the dates in ascending order
 sort -n dates.txt > sorted_dates.txt
+sort -n -r dates.txt > reverse_sorted_dates.txt
 
-# Get the minimum and maximum dates
-min_date=$(head -n 1 sorted_dates.txt)
-max_date=$(tail -n 1 sorted_dates.txt)
+# Get the minimum and maximum dates using sed to extract a line number, gettig rid of outliers
+min_date=$(sed '50q;d' sorted_dates.txt)
+max_date=$(sed '100q;d' reverse_sorted_dates.txt)
 average=$(awk '{x+=$0}END{print x/NR}' dates.txt)
 average=$(printf "%.0f" $average)
 
@@ -24,7 +25,7 @@ echo "The date range of files in $directory is $min_date_formatted to $max_date_
 echo "The average date is $avg_date_formatted"
 
 #copy date range to clipboard
-echo $min_date_formatted to $max_date_formatted | pbcopy
+echo $min_date_formatted to $max_date_formatted | xsel --clipboard --input
 
 # Clean up temporary files
-rm dates.txt sorted_dates.txt
+rm dates.txt sorted_dates.txt reverse_sorted_dates.txt
