@@ -1,5 +1,6 @@
 import csv
 import subprocess
+import sys
 
 
 # function that calls shell function du to calculate the size of a directory
@@ -41,6 +42,6 @@ def addDirectorySize(input_csv_path):
             
 
 if __name__ == '__main__':
-    csv_path = '/Volumes/MKFA_Trans/HD_SIPs/D_0199/reports/DROID/D_0199_DROID.csv'
+    csv_path = str(sys.argv[1])
     addDirectorySize(csv_path)
 
