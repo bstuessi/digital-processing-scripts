@@ -1,6 +1,8 @@
 import csv
 import subprocess
 import sys
+import os
+from datetime import datetime
 
 
 # function that calls shell function du to calculate the size of a directory
@@ -32,11 +34,14 @@ def addDirectorySize(input_csv_path):
         for row in reader:
             if row['TYPE'] == "Folder" and row['SIZE'] == '':
                 # if created on linux machine
-                size = du(row['FILE_PATH'].replace('/media/bcadmin', '/Volumes'))
-                if size == '':
-                    row['SIZE'] = None
-                else:
-                    row['SIZE'] = size
+                # size = du(row['FILE_PATH'].replace('/media/bcadmin', '/Volumes'))
+                size = du(row['FILE_PATH'])
+                row['SIZE'] = size
+                time_stamp = int(os.path.getmtime(row['FILE_PATH']))
+                row['LAST_MODIFIED'] = datetime.utcfromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
+            elif row['TYPE'] == 'File':
+                time_stamp = int(os.path.getmtime(row['FILE_PATH']))
+                row['LAST_MODIFIED'] = datetime.utcfromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
             row = {key: row[key] for key in fieldnames}
             writer.writerow(row)
             
