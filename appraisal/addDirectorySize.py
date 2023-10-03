@@ -37,11 +37,6 @@ def addDirectorySize(input_csv_path):
                 # size = du(row['FILE_PATH'].replace('/media/bcadmin', '/Volumes'))
                 size = du(row['FILE_PATH'])
                 row['SIZE'] = size
-                time_stamp = int(os.path.getmtime(row['FILE_PATH']))
-                row['LAST_MODIFIED'] = datetime.utcfromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
-            elif row['TYPE'] == 'File':
-                time_stamp = int(os.path.getmtime(row['FILE_PATH']))
-                row['LAST_MODIFIED'] = datetime.utcfromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
             row = {key: row[key] for key in fieldnames}
             writer.writerow(row)
             
