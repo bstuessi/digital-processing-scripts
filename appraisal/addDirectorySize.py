@@ -1,3 +1,4 @@
+
 import csv
 import subprocess
 import sys
@@ -21,7 +22,12 @@ def du(path):
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}\n Path: {path}")
         return None
-
+    except FileNotFoundError as e:
+        print(f"Error: Directory not found: {path}")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
 
 def addDirectorySize(input_csv_path):
     with open(input_csv_path, 'r') as in_csvfile, \
@@ -35,15 +41,14 @@ def addDirectorySize(input_csv_path):
             if row['TYPE'] == "Folder" and row['SIZE'] == '':
                 # if created on linux machine
                 # size = du(row['FILE_PATH'].replace('/media/bcadmin', '/Volumes'))
-                size = du(row['FILE_PATH'])
+                try:
+                    size = du(row['FILE_PATH'])
+                except FileNotFoundError as e: 
+                    print(f"Error: {e}\n Path: {row['FILE_PATH']}")
                 row['SIZE'] = size
-                time_stamp = int(os.path.getmtime(row['FILE_PATH']))
-                row['LAST_MODIFIED'] = datetime.utcfromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
-            elif row['TYPE'] == 'File':
-                time_stamp = int(os.path.getmtime(row['FILE_PATH']))
-                row['LAST_MODIFIED'] = datetime.utcfromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
-            row = {key: row[key] for key in fieldnames}
-            writer.writerow(row)
+            new_row = {key: row[key] for key in fieldnames}
+            writer.writerow(new_row)
+            
             
 
 if __name__ == '__main__':
