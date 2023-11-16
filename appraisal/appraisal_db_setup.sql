@@ -29,7 +29,7 @@ CREATE TABLE formats (
     puid VARCHAR(15) NOT NULL,
     name TEXT NOT NULL,
     mime_type TEXT NOT NULL,
-    extension VARCHAR(30), 
+    extension VARCHAR(255), 
     version VARCHAR(20)
 );
 

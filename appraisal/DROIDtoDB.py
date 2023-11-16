@@ -1,20 +1,18 @@
 import csv
 import psycopg2
 import re
+import os
+from sshtunnel import SSHTunnelForwarder
 
-conn = psycopg2.connect(database="digital_appraisal",
+
+#local db 
+conn = psycopg2.connect(database="digital_appraisal_new",
                         host="localhost",
                         user="mkf26",
                         password="clover",
                         port="5432")
 
 cursor = conn.cursor()
-
-def addMedia(id, media_type, group_id, rank):
-    # add corresponding SIP information (this could also be done in bulk)
-    cursor.execute("INSERT INTO media (id, media_type, group_id, rank) VALUES (%s, %s, %s, %s) ON CONFLICT (id) DO UPDATE SET rank=EXCLUDED.rank;", 
-                (id, media_type, group_id, rank))
-    conn.commit()
 
 def addFilesDirs(csv_path, media_id):
     # open csv
@@ -68,7 +66,7 @@ def addFilesDirs(csv_path, media_id):
                     cursor.execute(f"SELECT id FROM formats WHERE puid = '{format['puid']}' AND version = '{version}' AND extension = '{format['extension']}';")
                 else:
                     cursor.execute(f"SELECT id FROM formats WHERE puid = '{format['puid']}' AND extension = '{format['extension']}' AND version IS NULL;")
-                #grad format ID from cursoe
+                #grad format ID from cursor
                 format_id = cursor.fetchone()
                 #if no mathcing format id, create new format
                 if format_id == None:
@@ -78,16 +76,34 @@ def addFilesDirs(csv_path, media_id):
                 else:
                     format_id = format_id[0]
                 #bring it all together and insert into the files table
-                cursor.execute("INSERT INTO files (directory_id, file_path, file_name, size, mtime, md5_hash, format_id, digital_media_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING *;", (directory_ids[row['PARENT_ID']], path, row['NAME'], row['SIZE'], row['LAST_MODIFIED'], row['MD5_HASH'], format_id, media_id))
+                cursor.execute("INSERT INTO files (directory_id, file_path, file_name, size, mtime, md5_hash, format_id, digital_media_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING *;", (directory_ids[row['PARENT_ID']], path, row['NAME'], row['SIZE'], row['LAST_MODIFIED'] if row['LAST_MODIFIED'] else None, row['MD5_HASH'], format_id, media_id))
                 print(f"INSERT: {cursor.fetchone()}")
             conn.commit()
 
+def getDROIDreports():
+    droidPaths = []
+    digitalMediaIDs = []
+    count = 0
+    for dirpath, dirnames, filenames in os.walk('/Users/mkf26/Desktop/hd_appraisal'):
+        for filename in filenames:
+            if filename.endswith("w_dir_sizes.csv"):
+                D_ID = filename[:6]
+                D_ID = re.sub("_", "-", D_ID)
+                droidPaths.append(os.path.join(dirpath, filename))
+                digitalMediaIDs.append(D_ID)
+                count += 1
+    return list(zip(droidPaths, digitalMediaIDs))
+
+print(getDROIDreports())
+
 def main():
-    csv_path = '/Users/mkf26/Desktop/hd_appraisal/D_0223/D_0223_droid_w_dir_sizes.csv'
-    addMedia('D_0223', 'internal hard drive', '2.1', 24)
-    addFilesDirs(csv_path, 'D_0223')
+    # droidReports = getDROIDreports()
+    # for path, ID in droidReports:
+    #     addFilesDirs(path, ID)
+    addFilesDirs('/Users/mkf26/Desktop/hd_appraisal/server/server_backup_drives_droid_w_dir_sizes.csv', 'server')
     cursor.close()
     conn.close()
+    server.stop()
 
 main()
 
