@@ -160,8 +160,55 @@ set digital_media_id = 'D-0251E'
 where digital_media_id = 'D-0251'
 and dir_path like '%Kitchen Video/%';
 
+select id from
+(select m.id, count(*) as file_count
+from media as m
+left join files as f
+on m.id = f.digital_media_id
+group by m.id
+ order by m.id)
+where file_count != 1;
 
+INSERT INTO media(id, media_type, group_id, rank)
+VALUES ('D-0258A', 'external hard drive', '3.2', 17),
+('D-0258B', 'external hard drive', '2.2', 19),
+('D-0258C', 'external hard drive', '3.2', 13),
+('D-0258D', 'external hard drive', '2.2', 15);
 
+update files
+set digital_media_id = 'D-0258A'
+where digital_media_id = 'server';
 
+update directories
+set digital_media_id = 'D-0258A'
+where digital_media_id = 'server';
 
+update files
+set digital_media_id = 'D-0258B'
+where digital_media_id = 'server'
+and file_path like '%/Ahrum Drive 2/%';
 
+update files
+set digital_media_id = 'D-0258C'
+where digital_media_id = 'server'
+and file_path like '%/Email Backups migrated by Luckae/%';
+
+update files
+set digital_media_id = 'D-0258D'
+where digital_media_id = 'server'
+and dir_path like '%/Shop - New Storage/%';
+
+update directories
+set digital_media_id = 'D-0258B'
+where digital_media_id = 'server'
+and dir_path like '%/Ahrum Drive 2/%';
+
+update directories
+set digital_media_id = 'D-0258C'
+where digital_media_id = 'server'
+and dir_path like '%/Email Backups migrated by Luckae/%';
+
+update directories
+set digital_media_id = 'D-0258D'
+where digital_media_id = 'server'
+and dir_path like '%/Shop - New Storage/%';

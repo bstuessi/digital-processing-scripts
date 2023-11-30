@@ -1,24 +1,11 @@
+
+ 
 select f.id, f.puid, f."name", f."extension", count(*) as file_count
 from formats f
 left join files fi on f.id = fi.format_id
-where file_type is NULL
+where appraisal is null
 group by f.id, f."name"
 order by file_count desc;
-
-
-select f.directory_id, d.dir_path, count (*) as total_files
-from files f
-left join directories d
-on f.directory_id = d.id
-where f.format_id = 1
-and f.digital_media_id = 'D-0212'
-and file_type is NULL
-group by f.directory_id, d.dir_path
-order by total_files desc;
-
-select *
-from formats
-where name like '%AppleDouble%';
 
 --Format count for duplicate files--
 with DUPES as (
