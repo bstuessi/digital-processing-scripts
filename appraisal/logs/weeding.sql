@@ -320,4 +320,53 @@ where digital_media_id = 'D-0204'
 and file_path like '%.app%';
 
 
+update files
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0219C'
+and file_user is null;
+
+update files
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0223'
+and file_user = 'scope';
+
+update files 
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0250';
+
+update directories
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0250';
+
+update files
+set file_type = 'photo',
+appraisal_decision = 'scope'
+where digital_media_id = 'D-0212'
+and appraisal_decision is null
+and id != 1061179;
+
+update directories
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0212'
+and appraisal_decision is null
+and id != 129394;
+
+update files
+set appraisal_decision = 'scope'
+where file_user = 'bk';
+
+update directories
+set appraisal_decision = 'scope'
+where dir_user = 'bk';
+
+update files 
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0219C'
+and file_user = 'av';
+
+update directories 
+set appraisal_decision = 'scope'
+where digital_media_id = 'D-0219C'
+and dir_user = 'av';
+
 

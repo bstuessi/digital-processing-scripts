@@ -3,7 +3,7 @@ set has_duplicates = TRUE
 from
 	(select distinct directory_id
 	 from files
-	 where file_user = 'shop'
+	 where file_user = 'mc'
 	 and appraisal_decision = 'duplicate'
 	) as dup
 where dup.directory_id = directories.id;
@@ -17,6 +17,7 @@ from
 	right join directories d
 	on f.directory_id = d.id
 	where d.has_duplicates = TRUE
+	 and file_user = 'mc'
 	and f.appraisal_decision is NULL) as orph
 where orph.directory_id = directories.id;
 
@@ -52,3 +53,22 @@ WHERE
  select *
  from DUPE_DIRS
  where has_orphans = TRUE;
+ 
+ 
+ select sum(size)
+ from files
+ where file_user = 'mc'
+ and appraisal_decision = 'duplicate';
+ and appraisal_decision is null;
+ 
+ 
+ select count(*)
+ from
+ (select distinct directory_id
+ from files
+ where (file_user = 'studio'
+	or file_user = 'admin'
+	or file_user = 'unk'
+	or file_user = 'all')) as d1
+join directories d2 on d1.directory_id = d2.id
+where d2.has_orphans = TRUE;

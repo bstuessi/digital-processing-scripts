@@ -480,29 +480,185 @@
 -- where digital_media_id = 'D-0251'
 -- and file_path like '%Shop %';
 
-update files
-set file_user = 'studio'
-where digital_media_id = 'D-0223'
-and 
-(file_path like '%kelleystudio%'
-or file_path like '%/MIT/%'
-or file_path like '%/ICON book 2:2012/%');
+-- update files
+-- set file_user = 'studio'
+-- where digital_media_id = 'D-0223'
+-- and 
+-- (file_path like '%kelleystudio%'
+-- or file_path like '%/MIT/%'
+-- or file_path like '%/ICON book 2:2012/%');
+
+-- update files
+-- set file_user = 'shop'
+-- where digital_media_id = 'D-0258D';
+
+-- update files
+-- set file_user = 'ah'
+-- where digital_media_id = 'D-0258B';
+
+-- update files
+-- set file_user = 'video'
+-- where digital_media_id = 'D-0251B';
+
+-- update files
+-- set file_user = 'video'
+-- where digital_media_id = 'D-0251E';
+
 
 update files
-set file_user = 'shop'
-where digital_media_id = 'D-0258D';
+set file_user = 'admin'
+where digital_media_id = 'D-0211'
+and appraisal_decision is null
+and file_user is null;
+
+update files
+set file_user = 'server'
+where digital_media_id = 'D-0218'
+and appraisal_decision is null
+and file_user is null;
+
+update files
+set file_user = 'admin'
+where digital_media_id = 'D-0219A'
+and appraisal_decision is null
+and file_user is null;
+
+update files
+set file_user = 'mc'
+where digital_media_id = 'D-0219C'
+and appraisal_decision is null
+and file_user is null
+and file_path like '%/mcimac/%';
+
+update files
+set file_user = 'av'
+where digital_media_id = 'D-0219C'
+and appraisal_decision is null
+and file_user is null
+and file_path like '%/amy/%';
+
+update files
+set file_user = 'scope'
+where digital_media_id = 'D-0219C'
+and appraisal_decision = 'scope'
+and file_user is null;
+
+update files
+set file_user = 'admin'
+where digital_media_id = 'D-0219B'
+and appraisal_decision is null
+and file_user is null;
+
+update files
+set file_user = 'scope'
+where digital_media_id = 'D-0223'
+and appraisal_decision is null
+and file_user is null;
 
 update files
 set file_user = 'ah'
-where digital_media_id = 'D-0258B';
+where digital_media_id = 'D-0231'
+and appraisal_decision is null;
 
 update files
-set file_user = 'video'
-where digital_media_id = 'D-0251B';
+set file_user = 'bk'
+where digital_media_id = 'D-0232C';
 
 update files
-set file_user = 'video'
-where digital_media_id = 'D-0251E';
+set file_user = 'ah'
+where digital_media_id = 'D-0235'
+and appraisal_decision is null;
 
+update directories
+set dir_user = 'ah'
+where digital_media_id = 'D-0231'
+and appraisal_decision is null;
+
+update directories
+set dir_user = 'bk'
+where digital_media_id = 'D-0232C';
+
+update directories
+set dir_user = 'ah'
+where digital_media_id = 'D-0235'
+and appraisal_decision is null;
+
+update files 
+set file_user = 'admin'
+where digital_media_id = 'D-0240'
+and appraisal_decision is null;
+
+update directories
+set dir_user = 'admin'
+where digital_media_id = 'D-0240'
+and appraisal_decision is null;
+
+update files
+set file_user = 'admin'
+where digital_media_id = 'D-0244'
+and appraisal_decision is null
+and file_user is null;
+
+update directories
+set dir_user = 'admin'
+where digital_media_id = 'D-0244'
+and appraisal_decision is null
+and dir_user is null;
+
+update files 
+set file_user = 'server'
+where digital_media_id = 'D-0248'
+and appraisal_decision is null;
+
+update directories
+set dir_user = 'server'
+where digital_media_id = 'D-0248'
+and appraisal_decision is null;
+
+update files
+set file_user = 'server'
+where digital_media_id = 'D-0258A'
+and appraisal_decision is null;
+
+update directories
+set dir_user = 'server'
+where digital_media_id = 'D-0258A'
+and appraisal_decision is null;
+
+update files
+set file_user = 'admin'
+where digital_media_id = 'D-0205'
+and appraisal_decision is null;
+
+update directories
+set dir_user = 'admin'
+where digital_media_id = 'D-0205'
+and appraisal_decision is null;
+
+update files
+set file_user = 'shop'
+where digital_media_id = 'D-0243';
+
+update files
+set file_user = 'shop'
+where digital_media_id = 'D-0251A';
+
+update directories
+set dir_user = 'shop'
+where digital_media_id = 'D-0243';
+
+update directories
+set dir_user = 'shop'
+where digital_media_id = 'D-0251A';
+
+update files
+set file_user = 'mc'
+where digital_media_id = 'D-0244'
+and file_user = 'mk';
+
+update directories
+set dir_user = 'mc'
+where digital_media_id = 'D-0244'
+and dir_user = 'mk';
 
 
