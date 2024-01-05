@@ -1,5 +1,5 @@
 import psycopg2
-from sshtunnel import SSHTunnelForwarder
+# from sshtunnel import SSHTunnelForwarder
 import shutil
 import os
 import csv
@@ -30,8 +30,8 @@ import csv
 #local connection
 conn = psycopg2.connect(database="digital_appraisal_new",
                         host="localhost",
-                        user="mkf26",
-                        password="clover",
+                        user="bcadmin",
+                        password="bhu89IJN",
                         port="5432")
 
 cursor = conn.cursor()
@@ -100,7 +100,13 @@ def main():
 
     files_moved = 0 
     errors = 0
-    with open(f'/Users/mkf26/Documents/code/digital-processing-scripts/appraisal/ingest/logs/{digital_media_id}-ingest-errors.csv', 'w') as error_csv:
+    
+    # Get the script's directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Assuming the logs folder is in the parent directory of your script
+    logs_folder = os.path.join(script_dir, 'logs')
+    with open(os.path.join(logs_folder, f'{digital_media_id}-ingest-errors.csv'), 'w') as error_csv:
         writer = csv.writer(error_csv)
         writer.writerow(['error_paths'])
         for path in scope_paths:
