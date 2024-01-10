@@ -64,7 +64,7 @@ def moveFile(origin_path, target_dir_path):
         print(f"Moved: {origin_path} to {destination_file_path}")
         return True
     except Exception as e:
-        print(f"Error moving {origin_path} to {destination_file_path}: {e}")
+        print(f"Error moving {origin_path} to {destination_file_path if destination_file_path else target_dir_path}: {e}")
         return False
 
 
