@@ -5,34 +5,34 @@ import os
 import csv
 
 
-# #connect to database using ssh port forwarding workflow
-# server = SSHTunnelForwarder(
-#     ('10.0.1.139', 22),
-#     ssh_username='bcadmin',
-#     ssh_pkey='/Users/mkf26/.ssh/id_ed25519',
-#     ssh_private_key_password='Poltergeist96!',
-#     remote_bind_address=('localhost', 5432)
-# )
+#connect to database using ssh port forwarding workflow
+server = SSHTunnelForwarder(
+    ('10.0.1.202', 22),
+    ssh_username='bcadmin',
+    ssh_pkey='/Users/mkf26/.ssh/id_ed25519',
+    ssh_private_key_password='Poltergeist96!',
+    remote_bind_address=('localhost', 5432)
+)
 
-# server.start()
+server.start()
 
-# print(server.local_bind_port)  # show assigned local port
-# # work with `SECRET SERVICE` through `server.local_bind_port`.
+print(server.local_bind_port)  # show assigned local port
+# work with `SECRET SERVICE` through `server.local_bind_port`.
 
-# conn = psycopg2.connect(
-#     database='digital_appraisal_new',
-#     user='bcadmin',
-#     host=server.local_bind_host,
-#     port=server.local_bind_port,
-#     password='090696')
-# cur = conn.cursor()
+conn = psycopg2.connect(
+    database='digital_appraisal_new',
+    user='bcadmin',
+    host=server.local_bind_host,
+    port=server.local_bind_port,
+    password='bhu89IJN')
 
-#local connection
-conn = psycopg2.connect(database="digital_appraisal_new",
-                        host="localhost",
-                        user="bcadmin",
-                        password="bhu89IJN",
-                        port="5432")
+
+# #local connection
+# conn = psycopg2.connect(database="digital_appraisal_new",
+#                         host="localhost",
+#                         user="bcadmin",
+#                         password="bhu89IJN",
+#                         port="5432")
 
 cursor = conn.cursor()
 
@@ -42,16 +42,28 @@ def formatPath(path, path_to_replace, new_path_start):
     return new_path
 
 def getKeepFilePaths(media_id, path_to_replace, new_path_start):
-    cursor.execute("SELECT file_path FROM files WHERE digital_media_id = (%s) AND appraisal_decision is null;", (media_id,))
-    duplicate_paths = [formatPath(row[0], path_to_replace, new_path_start) for row in cursor.fetchall()]
-    return duplicate_paths
+    keep_paths = []
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT file_path FROM files WHERE digital_media_id = (%s) AND appraisal_decision is null;", (media_id,))
+        # Only add non-blank paths to the list
+        for row in cursor.fetchall():
+            file_path = row[0]
+            if file_path and file_path.strip():  # Check if the path is not blank
+                keep_paths.append(formatPath(file_path, path_to_replace, new_path_start))
+    except Exception as e:
+        print(f"Error retrieving file paths: {e}")
+    finally:
+        cursor.close()
+    
+    return keep_paths
 
 def copyFile(source_path, source_root, destination_root):
     try:
         destination_path = os.path.join(destination_root, os.path.relpath(source_path, source_root))
 
         #make directories at destination
-        os.makedirs(os.path.dirname(destination_path, exist_ok=True))
+        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
         shutil.copy2(source_path, destination_path)
 
@@ -90,6 +102,7 @@ def main():
                 files_moved += 1
 
             else: 
+                writer.writerow([path])
                 errors += 1
 
     print(f"{files_moved} files moved")
