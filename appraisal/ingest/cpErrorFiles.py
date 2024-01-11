@@ -23,8 +23,10 @@ def copyFile(source_path, source_root, destination_root):
     try:
         destination_path = os.path.join(destination_root, os.path.relpath(source_path, source_root))
         destination_path = ''.join(c for c in destination_path if c not in '"*:<>?\\|')
-        #make directories at destination
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        # Check if the destination directory exists
+        if not os.path.exists(os.path.dirname(destination_path)):
+            # If it doesn't exist, create it
+            os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
         shutil.copy2(source_path, destination_path)
 
