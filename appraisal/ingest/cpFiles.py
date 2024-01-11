@@ -1,45 +1,58 @@
 import psycopg2
-from sshtunnel import SSHTunnelForwarder
+# from sshtunnel import SSHTunnelForwarder
 import shutil
 import os
 import csv
 
 
-#connect to database using ssh port forwarding workflow
-server = SSHTunnelForwarder(
-    ('10.0.1.202', 22),
-    ssh_username='bcadmin',
-    ssh_pkey='/Users/mkf26/.ssh/id_ed25519',
-    ssh_private_key_password='Poltergeist96!',
-    remote_bind_address=('localhost', 5432)
-)
+# #connect to database using ssh port forwarding workflow
+# server = SSHTunnelForwarder(
+#     ('10.0.1.202', 22),
+#     ssh_username='bcadmin',
+#     ssh_pkey='/Users/mkf26/.ssh/id_ed25519',
+#     ssh_private_key_password='Poltergeist96!',
+#     remote_bind_address=('localhost', 5432)
+# )
 
-server.start()
+# server.start()
 
-print(server.local_bind_port)  # show assigned local port
-# work with `SECRET SERVICE` through `server.local_bind_port`.
+# print(server.local_bind_port)  # show assigned local port
+# # work with `SECRET SERVICE` through `server.local_bind_port`.
 
-conn = psycopg2.connect(
-    database='digital_appraisal_new',
-    user='bcadmin',
-    host=server.local_bind_host,
-    port=server.local_bind_port,
-    password='bhu89IJN')
+# conn = psycopg2.connect(
+#     database='digital_appraisal_new',
+#     user='bcadmin',
+#     host=server.local_bind_host,
+#     port=server.local_bind_port,
+#     password='bhu89IJN')
 
 
-# #local connection
-# conn = psycopg2.connect(database="digital_appraisal_new",
-#                         host="localhost",
-#                         user="bcadmin",
-#                         password="bhu89IJN",
-#                         port="5432")
+#local connection
+conn = psycopg2.connect(database="digital_appraisal_new",
+                        host="localhost",
+                        user="bcadmin",
+                        password="bhu89IJN",
+                        port="5432")
 
 cursor = conn.cursor()
 
 
-def formatPath(path, path_to_replace, new_path_start):
-    new_path = path.replace(path_to_replace, new_path_start)
-    return new_path
+def formatPath(path, path_to_replace, new_path_start, encoding='utf-8'):
+    try:
+        # Encode the path using the specified encoding
+        path = path.encode(encoding)
+        
+        # Replace the specified portion of the path
+        new_path = path.replace(path_to_replace.encode(encoding), new_path_start.encode(encoding))
+        
+        # Decode the resulting path back to a string
+        new_path = new_path.decode(encoding)
+        
+        return new_path
+    except Exception as e:
+        print(f"Error formatting path: {e}")
+        return None
+
 
 def getKeepFilePaths(media_id, path_to_replace, new_path_start):
     keep_paths = []
