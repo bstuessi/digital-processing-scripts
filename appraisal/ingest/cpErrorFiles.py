@@ -1,40 +1,8 @@
-import psycopg2
-# from sshtunnel import SSHTunnelForwarder
+
 import shutil
 import os
 import csv
 
-
-# #connect to database using ssh port forwarding workflow
-# server = SSHTunnelForwarder(
-#     ('10.0.1.202', 22),
-#     ssh_username='bcadmin',
-#     ssh_pkey='/Users/mkf26/.ssh/id_ed25519',
-#     ssh_private_key_password='Poltergeist96!',
-#     remote_bind_address=('localhost', 5432)
-# )
-
-# server.start()
-
-# print(server.local_bind_port)  # show assigned local port
-# # work with `SECRET SERVICE` through `server.local_bind_port`.
-
-# conn = psycopg2.connect(
-#     database='digital_appraisal_new',
-#     user='bcadmin',
-#     host=server.local_bind_host,
-#     port=server.local_bind_port,
-#     password='bhu89IJN')
-
-
-#local connection
-conn = psycopg2.connect(database="digital_appraisal_new",
-                        host="localhost",
-                        user="bcadmin",
-                        password="bhu89IJN",
-                        port="5432")
-
-cursor = conn.cursor()
 
 
 def formatPath(path, path_to_replace, new_path_start):
@@ -69,10 +37,7 @@ def copyFile(source_path, source_root, destination_root):
 
 
 def main():
-    digital_media_id = input("What digital media ID are you working on? ")
-    cursor.execute("SELECT file_path FROM files WHERE digital_media_id = (%s) LIMIT 1;", (digital_media_id, ))
-    print(f"Sample file path from database: {cursor.fetchone()}")
-    
+    digital_media_id = input("What digital media ID are you working on? ")    
     source_new_root = input("What is the root path for the files to copy? ")
     destination_path = input("What is the root path for the destination directory? ")
 
@@ -102,8 +67,6 @@ def main():
     print(f"{files_moved} files moved")
     print(f"{errors} errors")
 
-    cursor.close()
-    conn.close()
 
 if __name__ == "__main__":
     main()
