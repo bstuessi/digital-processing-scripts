@@ -37,44 +37,24 @@ conn = psycopg2.connect(database="digital_appraisal_new",
 cursor = conn.cursor()
 
 
-def formatPath(path, path_to_replace, new_path_start, encoding='utf-8'):
-    try:
-        # Encode the path using the specified encoding
-        path = path.encode(encoding)
-        
-        # Replace the specified portion of the path
-        new_path = path.replace(path_to_replace.encode(encoding), new_path_start.encode(encoding))
-        
-        # Decode the resulting path back to a string
-        new_path = new_path.decode(encoding)
-        
-        return new_path
-    except Exception as e:
-        print(f"Error formatting path: {e}")
-        return None
+def formatPath(path, path_to_replace, new_path_start):
+    new_path = path.replace(path_to_replace, new_path_start)
+    return new_path
 
 
-def getKeepFilePaths(media_id, path_to_replace, new_path_start):
-    keep_paths = []
-    try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT file_path FROM files WHERE digital_media_id = (%s) AND appraisal_decision is null;", (media_id,))
-        # Only add non-blank paths to the list
-        for row in cursor.fetchall():
-            file_path = row[0]
-            if file_path and file_path.strip():  # Check if the path is not blank
-                keep_paths.append(formatPath(file_path, path_to_replace, new_path_start))
-    except Exception as e:
-        print(f"Error retrieving file paths: {e}")
-    finally:
-        cursor.close()
-    
-    return keep_paths
+def parseCSV(path):
+    with open(path, 'r', encoding='utf-8') as error_csv:
+        reader = csv.reader(error_csv)
+        headers = next(reader)
+        file_paths = [row[0] for row in reader]
+    return file_paths
+
+        
 
 def copyFile(source_path, source_root, destination_root):
     try:
         destination_path = os.path.join(destination_root, os.path.relpath(source_path, source_root))
-
+        destination_path = ''.join(c for c in destination_path if c not in '"*:<>?\\|')
         #make directories at destination
         os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
@@ -93,11 +73,12 @@ def main():
     cursor.execute("SELECT file_path FROM files WHERE digital_media_id = (%s) LIMIT 1;", (digital_media_id, ))
     print(f"Sample file path from database: {cursor.fetchone()}")
     
-    source_old_root = input('What is the root path in the database? ')
     source_new_root = input("What is the root path for the files to copy? ")
     destination_path = input("What is the root path for the destination directory? ")
 
-    files_to_copy = getKeepFilePaths(digital_media_id, source_old_root, source_new_root)
+    error_csv_path = input("What is the path to error csv you are working on? ")
+
+    files_to_copy = parseCSV(error_csv_path)
 
     files_moved = 0 
     errors = 0
@@ -107,7 +88,7 @@ def main():
 
     # Assuming the logs folder is in the parent directory of your script
     logs_folder = os.path.join(script_dir, 'logs')
-    with open(os.path.join(logs_folder, f'{digital_media_id}-ingest-errors.csv'), 'w') as error_csv:
+    with open(os.path.join(logs_folder, f'{digital_media_id}_errors-ingest-errors.csv'), 'w') as error_csv:
         writer = csv.writer(error_csv)
         writer.writerow(['error_paths'])
         for path in files_to_copy:
