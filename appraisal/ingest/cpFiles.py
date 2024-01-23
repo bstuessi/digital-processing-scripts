@@ -75,10 +75,10 @@ def copyFile(source_path, source_root, destination_root):
         shutil.copy2(source_path, destination_path)
 
         print(f"Copied {source_path} to {destination_path}")
-        return True
+        return (True, destination_path)
     except Exception as e:
         print(f"Error copying {source_path} to {destination_path}: {e}")
-        return False
+        return (False, e)
 
 
 
@@ -103,13 +103,14 @@ def main():
     logs_folder = os.path.join(script_dir, 'logs')
     with open(os.path.join(logs_folder, f'{digital_media_id}-ingest-errors.csv'), 'w') as error_csv:
         writer = csv.writer(error_csv)
-        writer.writerow(['error_paths'])
+        writer.writerow(['error_path', 'error_message'])
         for path in files_to_copy:
-            if copyFile(path, source_new_root, destination_path):
+            result = copyFile(path, source_new_root, destination_path)
+            if result[0]:
                 files_moved += 1
 
             else: 
-                writer.writerow([path])
+                writer.writerow([path, result[1]])
                 errors += 1
 
     print(f"{files_moved} files moved")
