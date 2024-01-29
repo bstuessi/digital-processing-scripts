@@ -69,13 +69,17 @@ def copyFile(source_path, source_root, destination_root):
     try:
         destination_path = os.path.join(destination_root, os.path.relpath(source_path, source_root))
 
-        #make directories at destination
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        # Check if the file already exists at the destination
+        if not os.path.exists(destination_path):
+            # make directories at destination
+            os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
-        shutil.copy2(source_path, destination_path)
-
-        print(f"Copied {source_path} to {destination_path}")
-        return (True, destination_path)
+            shutil.copy2(source_path, destination_path)
+            print(f"Copied {source_path} to {destination_path}")
+            return (True, destination_path)
+        else:
+            print(f"Skipped copying {source_path} as it already exists at {destination_path}")
+            return (True, destination_path)  # Treat as success as the file is already at the destination
     except Exception as e:
         print(f"Error copying {source_path} to {destination_path}: {e}")
         return (False, e)
