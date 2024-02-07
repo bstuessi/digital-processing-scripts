@@ -22,19 +22,21 @@ def parseCSV(path):
 def copyFile(source_path, source_root, destination_root):
     try:
         destination_path = os.path.join(destination_root, os.path.relpath(source_path, source_root))
-        destination_path = ''.join(c for c in destination_path if c not in '"*:<>?\\|')
-        # Check if the destination directory exists
-        if not os.path.exists(os.path.dirname(destination_path)):
-            # If it doesn't exist, create it
+
+        # Check if the file already exists at the destination
+        if not os.path.exists(destination_path):
+            # make directories at destination
             os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
-        shutil.copy2(source_path, destination_path)
-
-        print(f"Copied {source_path} to {destination_path}")
-        return True
+            shutil.copy2(source_path, destination_path)
+            print(f"Copied {source_path} to {destination_path}")
+            return (True, destination_path)
+        else:
+            print(f"Skipped copying {source_path} as it already exists at {destination_path}")
+            return (True, destination_path)  # Treat as success as the file is already at the destination
     except Exception as e:
         print(f"Error copying {source_path} to {destination_path}: {e}")
-        return False
+        return (False, e)
 
 
 
@@ -50,20 +52,21 @@ def main():
     files_moved = 0 
     errors = 0
 
-    # Get the script's directory
+   # Get the script's directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Assuming the logs folder is in the parent directory of your script
     logs_folder = os.path.join(script_dir, 'logs')
-    with open(os.path.join(logs_folder, f'{digital_media_id}_errors-ingest-errors.csv'), 'w') as error_csv:
+    with open(os.path.join(logs_folder, f'{digital_media_id}-ingest-errors.csv'), 'w') as error_csv:
         writer = csv.writer(error_csv)
-        writer.writerow(['error_paths'])
+        writer.writerow(['error_path', 'error_message'])
         for path in files_to_copy:
-            if copyFile(path, source_new_root, destination_path):
+            result = copyFile(path, source_new_root, destination_path)
+            if result[0]:
                 files_moved += 1
 
             else: 
-                writer.writerow([path])
+                writer.writerow([path, result[1]])
                 errors += 1
 
     print(f"{files_moved} files moved")
